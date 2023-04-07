@@ -181,24 +181,7 @@ const GolfScorecard = () => {
     setPlayerHandicaps(newPlayerHandicaps);
   };
 
-  const getLowestScorePlayerIndex = (holeIndex) => {
-    let lowestScore = Infinity;
-    let lowestScorePlayerIndex = null;
-    let numLowestScores = 0;
 
-    for (let i = 0; i < playerNames.length; i++) {
-      const playerScore = scores[i][holeIndex];
-      if (playerScore !== "" && parseInt(playerScore) < lowestScore) {
-        lowestScore = parseInt(playerScore);
-        lowestScorePlayerIndex = i;
-        numLowestScores = 1;
-      } else if (playerScore !== "" && parseInt(playerScore) === lowestScore) {
-        numLowestScores++;
-      }
-    }
-  
-    return numLowestScores === 1 ? lowestScorePlayerIndex : null;
-  };
   const getCellClassName = (playerIndex, holeIndex) => {
     const lowestNetScorePlayerIndex = getLowestNetScorePlayerIndex(holeIndex);
     const strokeIndex = getStrokeIndex(playerIndex, holeIndex);
