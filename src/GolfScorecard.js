@@ -10,7 +10,7 @@ const holeInfo = [
   { hole: 3, par: 5, handicap: 7 },
   { hole: 4, par: 4, handicap: 1 },
   { hole: 5, par: 4, handicap: 9 },
-  { hole: 6, par: 5, handicap: 16 },
+  { hole: 6, par: 5, handicap: 13 },
   { hole: 7, par: 3, handicap: 17 },
   { hole: 8, par: 4, handicap: 15 },
   { hole: 9, par: 4, handicap: 3 },
@@ -20,13 +20,17 @@ const holeInfo = [
   { hole: 13, par: 4, handicap: 12 },
   { hole: 14, par: 4, handicap: 10 },
   { hole: 15, par: 4, handicap: 2 },
-  { hole: 16, par: 5, handicap: 2 },
+  { hole: 16, par: 5, handicap: 16 },
   { hole: 17, par: 3, handicap: 18 },
   { hole: 18, par: 5, handicap: 6 },
 ];
 
 
 const GolfScorecard = () => {
+
+  useEffect(() => {
+    saveStateToLocalStorage();
+  }, [scores]);
 
   useEffect(() => {
     const storedPlayerNames = localStorage.getItem("playerNames");
