@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./GolfScorecard.css";
+import { format } from 'date-fns';
 
 const holeInfo = [
   { hole: 1, par: 4, handicap: 5 },
@@ -25,6 +26,9 @@ const holeInfo = [
 
 const GolfScorecard = () => {
 
+
+
+  
   const [buyIn, setBuyIn] = useState(10);
   const [isBuyInPopupVisible, setIsBuyInPopupVisible] = useState(false);
   const changeBuyIn = (newBuyIn) => {
@@ -182,6 +186,28 @@ const GolfScorecard = () => {
   };
 
 
+  const [rounds, setRounds] = useState([]);
+
+const saveRound = () => {
+  // Add current round data to the rounds state
+  setRounds([
+    ...rounds,
+    {
+      // Add any relevant data from the scorecard that you'd like to store for each round
+      // For example: scores, players, date, etc.
+      scores: [...scores],
+      players: [...players],
+      date: new Date(),
+    },
+  ]);
+};
+
+const deleteRound = (index) => {
+  if (window.confirm("Are you sure you want to delete this round?")) {
+    setRounds(rounds.filter((_, i) => i !== index));
+  }
+};
+
   const getCellClassName = (playerIndex, holeIndex) => {
     const lowestNetScorePlayerIndex = getLowestNetScorePlayerIndex(holeIndex);
     const strokeIndex = getStrokeIndex(playerIndex, holeIndex);
@@ -200,6 +226,40 @@ const GolfScorecard = () => {
 
   return (
     <div className="scorecard">
+          <div className="rounds-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              {playerNames.map((playerName, i) => (
+                <th key={i}>Player {i + 1}</th>
+              ))}
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rounds.map((round, index) => (
+              <tr key={index}>
+                <td>{format(round.date, 'yyyy-MM-dd')}</td>
+                {round.scores.map((score, i) => (
+                  <td key={i}>{score}</td>
+                ))}
+                <td>
+                  <button onClick={() => deleteRound(index)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      
+      <div className="save-round-button">
+        <button className="button-style" onClick={saveRound}>
+          Save Round
+        </button>
+      </div>
+
+
       <div className="header">
         <div className="cell player-name"></div>
         {holeInfo.map((hole) => (
