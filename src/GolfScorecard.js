@@ -264,11 +264,7 @@ const deleteRound = (index) => {
         <button onClick={toggleBuyInPopup}>Change Buy-in</button>
       </div>
 
-      <div className="add-player-button">
-        <button className="button-style" onClick={addPlayerWithHandicap}>
-          Add Player
-        </button>
-      </div>
+
 
 
       <div className="header">
