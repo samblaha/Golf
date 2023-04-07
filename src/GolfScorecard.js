@@ -28,9 +28,7 @@ const holeInfo = [
 
 const GolfScorecard = () => {
 
-  useEffect(() => {
-    saveStateToLocalStorage();
-  }, [scores]);
+
 
   useEffect(() => {
     const storedPlayerNames = localStorage.getItem("playerNames");
