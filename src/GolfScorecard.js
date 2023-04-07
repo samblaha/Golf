@@ -37,7 +37,7 @@ const GolfScorecard = () => {
   const toggleBuyInPopup = () => {
     setIsBuyInPopupVisible(!isBuyInPopupVisible);
   };
-  <button onClick={toggleBuyInPopup}>Change Buy-in</button>
+
 
 
   const getStrokeIndex = (playerIndex, holeIndex) => {
@@ -188,19 +188,20 @@ const GolfScorecard = () => {
 
   const [rounds, setRounds] = useState([]);
 
-const saveRound = () => {
-  // Add current round data to the rounds state
-  setRounds([
-    ...rounds,
-    {
-      // Add any relevant data from the scorecard that you'd like to store for each round
-      // For example: scores, players, date, etc.
-      scores: [...scores],
-      players: [...players],
-      date: new Date(),
-    },
-  ]);
-};
+  const saveRound = () => {
+    // Add current round data to the rounds state
+    setRounds([
+      ...rounds,
+      {
+        // Add any relevant data from the scorecard that you'd like to store for each round
+        // For example: scores, players, date, etc.
+        scores: [scores],
+        players: [...playerNames],
+        date: new Date(),
+      },
+    ]);
+  };
+  
 
 const deleteRound = (index) => {
   if (window.confirm("Are you sure you want to delete this round?")) {
@@ -256,6 +257,16 @@ const deleteRound = (index) => {
       <div className="save-round-button">
         <button className="button-style" onClick={saveRound}>
           Save Round
+        </button>
+      </div>
+
+      <div className="change-buyin-button">
+        <button onClick={toggleBuyInPopup}>Change Buy-in</button>
+      </div>
+
+      <div className="add-player-button">
+        <button className="button-style" onClick={addPlayerWithHandicap}>
+          Add Player
         </button>
       </div>
 
