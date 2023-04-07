@@ -166,17 +166,7 @@ const GolfScorecard = () => {
     }
   };
 
-  const loadStateFromLocalStorage = () => {
-    const savedPlayerNames = JSON.parse(localStorage.getItem("playerNames"));
-    const savedPlayerHandicaps = JSON.parse(localStorage.getItem("playerHandicaps"));
-    const savedScores = JSON.parse(localStorage.getItem("scores"));
-  
-    if (savedPlayerNames && savedPlayerHandicaps && savedScores) {
-      setPlayerNames(savedPlayerNames);
-      setPlayerHandicaps(savedPlayerHandicaps);
-      setScores(savedScores);
-    }
-  };
+
   
 
 
