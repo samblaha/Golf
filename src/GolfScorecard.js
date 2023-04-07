@@ -254,15 +254,9 @@ const deleteRound = (index) => {
         </table>
       </div>
       
-      <div className="save-round-button">
-        <button className="button-style" onClick={saveRound}>
-          Save Round
-        </button>
-      </div>
 
-      <div className="change-buyin-button">
-        <button onClick={toggleBuyInPopup}>Change Buy-in</button>
-      </div>
+
+
 
 
 
@@ -323,7 +317,7 @@ const deleteRound = (index) => {
 
 
 <div className="footer">
-  {isBuyInPopupVisible && (
+{isBuyInPopupVisible && (
     <div className="buy-in-popup">
       <h3>Change Buy-in</h3>
       <input
@@ -341,6 +335,9 @@ const deleteRound = (index) => {
     </button>
     <button className="button-style" onClick={toggleBuyInPopup}>
       Change Buy-in
+    </button>
+    <button className="button-style" onClick={saveRound}>
+      Save Round
     </button>
   </div>
 </div>
