@@ -227,32 +227,7 @@ const deleteRound = (index) => {
 
   return (
     <div className="scorecard">
-          <div className="rounds-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              {playerNames.map((playerName, i) => (
-                <th key={i}>Player {i + 1}</th>
-              ))}
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rounds.map((round, index) => (
-              <tr key={index}>
-                <td>{format(round.date, 'yyyy-MM-dd')}</td>
-                {round.scores.map((score, i) => (
-                  <td key={i}>{score}</td>
-                ))}
-                <td>
-                  <button onClick={() => deleteRound(index)}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+         
       
 
 
@@ -355,7 +330,36 @@ const deleteRound = (index) => {
   </div>
 )}
 
+<div className="rounds-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              {playerNames.map((playerName, i) => (
+                <th key={i}>Player {i + 1}</th>
+              ))}
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rounds.map((round, index) => (
+              <tr key={index}>
+                <td>{format(round.date, 'yyyy-MM-dd')}</td>
+                {round.scores.map((score, i) => (
+                  <td key={i}>{score}</td>
+                ))}
+                <td>
+                  <button onClick={() => deleteRound(index)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
     </div>
+
+    
 
 
   );
