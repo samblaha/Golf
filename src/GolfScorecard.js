@@ -334,11 +334,11 @@ const deleteRound = (index) => {
         <table>
           <thead>
             <tr>
-              <th>Date</th>
+              <th>Round Date</th>
               {playerNames.map((playerName, i) => (
                 <th key={i}>Player {i + 1}</th>
               ))}
-              <th>Action</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
