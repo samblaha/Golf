@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+
 import "./GolfScorecard.css";
 import { format } from 'date-fns';
+import React, { useState, useEffect } from "react";
+
 
 const holeInfo = [
   { hole: 1, par: 4, handicap: 5 },
@@ -26,8 +28,29 @@ const holeInfo = [
 
 const GolfScorecard = () => {
 
+  useEffect(() => {
+    const storedPlayerNames = localStorage.getItem("playerNames");
+    if (storedPlayerNames) {
+      setPlayerNames(JSON.parse(storedPlayerNames));
+    }
 
+    const storedPlayerHandicaps = localStorage.getItem("playerHandicaps");
+    if (storedPlayerHandicaps) {
+      setPlayerHandicaps(JSON.parse(storedPlayerHandicaps));
+    }
 
+    const storedScores = localStorage.getItem("scores");
+    if (storedScores) {
+      setScores(JSON.parse(storedScores));
+    }
+  }, []);
+  const saveStateToLocalStorage = () => {
+    localStorage.setItem("playerNames", JSON.stringify(playerNames));
+    localStorage.setItem("playerHandicaps", JSON.stringify(playerHandicaps));
+    localStorage.setItem("scores", JSON.stringify(scores));
+  };
+  
+  
   
   const [buyIn, setBuyIn] = useState(10);
   const [isBuyInPopupVisible, setIsBuyInPopupVisible] = useState(false);
@@ -61,6 +84,7 @@ const GolfScorecard = () => {
       alert("Invalid handicap entered. Please enter a valid number.");
     } else {
       addPlayer(playerName, handicap);
+      saveStateToLocalStorage();
     }
   };
  
@@ -133,13 +157,27 @@ const GolfScorecard = () => {
       const newPlayerNames = [...playerNames];
       newPlayerNames.splice(playerIndex, 1);
       setPlayerNames(newPlayerNames);
+      saveStateToLocalStorage();
 
       const newScores = [...scores];
       newScores.splice(playerIndex, 1);
       setScores(newScores);
+      saveStateToLocalStorage();
     }
   };
 
+  const loadStateFromLocalStorage = () => {
+    const savedPlayerNames = JSON.parse(localStorage.getItem("playerNames"));
+    const savedPlayerHandicaps = JSON.parse(localStorage.getItem("playerHandicaps"));
+    const savedScores = JSON.parse(localStorage.getItem("scores"));
+  
+    if (savedPlayerNames && savedPlayerHandicaps && savedScores) {
+      setPlayerNames(savedPlayerNames);
+      setPlayerHandicaps(savedPlayerHandicaps);
+      setScores(savedScores);
+    }
+  };
+  
 
 
   const handlePlayerNameChange = (index, newName) => {
@@ -183,6 +221,7 @@ const GolfScorecard = () => {
     setPlayerNames(newPlayerNames);
     setScores(newScores);
     setPlayerHandicaps(newPlayerHandicaps);
+    saveStateToLocalStorage();
   };
 
 
