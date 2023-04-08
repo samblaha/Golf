@@ -1,7 +1,8 @@
 
 import "./GolfScorecard.css";
 import { format } from 'date-fns';
-import React, { useState,  } from "react";
+import React, { useState, useEffect } from "react";
+import { db } from './firebaseConfig';
 
 
 const holeInfo = [
@@ -34,6 +35,15 @@ const GolfScorecard = () => {
     localStorage.setItem("scores", JSON.stringify(scores));
   };
   
+  const fetchRounds = async () => {
+    try {
+      const snapshot = await db.collection("rounds").get();
+      const fetchedRounds = snapshot.docs.map((doc) => doc.data());
+      setRounds(fetchedRounds);
+    } catch (error) {
+      console.error("Error fetching rounds: ", error);
+    }
+  };
   
   
   const [buyIn, setBuyIn] = useState(10);
@@ -229,17 +239,50 @@ const GolfScorecard = () => {
     return storedRounds ? JSON.parse(storedRounds) : [];
   });
   
+  useEffect(() => {
+    fetchRounds();
+  }, []);
 
-
-
-
-  const deleteRound = (index) => {
+  const deleteRound = async (index) => {
     if (window.confirm("Are you sure you want to delete this round?")) {
-      const newRounds = rounds.filter((_, i) => i !== index);
-      setRounds(newRounds);
-      localStorage.setItem("rounds", JSON.stringify(newRounds));
+      const roundToDelete = rounds[index];
+      try {
+        await db.collection("rounds").doc(roundToDelete.id).delete();
+        fetchRounds();
+      } catch (error) {
+        console.error("Error removing round: ", error);
+      }
     }
   };
+
+  const addRound = async () => {
+    const newRound = {
+      score: 0,
+      date: new Date().toISOString(),
+    };
+
+    try {
+      await db.collection("rounds").add(newRound);
+      fetchRounds();
+    } catch (error) {
+      console.error("Error adding new round: ", error);
+    }
+  };
+
+  const updateRound = async (index, updatedScore) => {
+    const roundToUpdate = rounds[index];
+    try {
+      await db.collection("rounds").doc(roundToUpdate.id).update({
+        score: updatedScore,
+      });
+      fetchRounds();
+    } catch (error) {
+      console.error("Error updating round: ", error);
+    }
+  };
+
+    
+    
   
 
   const getCellClassName = (playerIndex, holeIndex) => {
@@ -372,6 +415,7 @@ const GolfScorecard = () => {
                 <th key={i}>Player {i + 1}</th>
               ))}
               <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -384,20 +428,25 @@ const GolfScorecard = () => {
                 <td>
                   <button onClick={() => deleteRound(index)}>Delete</button>
                 </td>
+                <td>
+                  <button
+                    onClick={() =>
+                      updateRound(index, prompt('Enter the updated score:'))
+                    }
+                  >
+                    Update
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <button className="button-style" onClick={addRound}>
+          Add Round
+        </button>
       </div>
-
     </div>
-
-    
-
-
   );
-  
- };
-          
-            
-            export default GolfScorecard;
+};
+
+export default GolfScorecard;
