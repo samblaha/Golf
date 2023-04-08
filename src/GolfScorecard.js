@@ -6,6 +6,8 @@ import {  db } from './firebase';
 
 
 
+
+
 const holeInfo = [
   { hole: 1, par: 4, handicap: 5 },
   { hole: 2, par: 3, handicap: 11 },
