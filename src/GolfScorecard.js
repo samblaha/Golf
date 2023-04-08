@@ -2,7 +2,8 @@
 import "./GolfScorecard.css";
 import { format } from 'date-fns';
 import React, { useState, useEffect } from "react";
-import { db } from './firebaseConfig';
+import {  db } from './firebase';
+
 
 
 const holeInfo = [
