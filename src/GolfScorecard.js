@@ -1,6 +1,6 @@
 
 import "./GolfScorecard.css";
-import { format } from 'date-fns';
+
 import React, { useState, useEffect } from "react";
 import {  db } from './firebase';
 
@@ -442,7 +442,7 @@ const GolfScorecard = () => {
           <tbody>
             {rounds.map((round, index) => (
               <tr key={index}>
-                <td>{format(round.date, 'yyyy-MM-dd')}</td>
+                <td>{new Date(round.date).toISOString().split('T')[0]}</td>
                 {round.scores.map((score, i) => (
                   <td key={i}>{score}</td>
                 ))}
