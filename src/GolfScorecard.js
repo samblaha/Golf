@@ -1,10 +1,6 @@
-
 import "./GolfScorecard.css";
-
+import { format } from 'date-fns';
 import React, { useState, useEffect } from "react";
-import {  db } from './firebase';
-
-
 
 
 
@@ -30,45 +26,38 @@ const holeInfo = [
 ];
 
 
-const GolfScorecard = ({ initialScores  }) => {
-  const [inputValues, setInputValues] = useState(() => {
-    return scores
-      ? scores.map(playerScores =>
-          playerScores.map(score => (score === '' ? '' : String(score))),
-        )
-      : [];
-  });
+const GolfScorecard = () => {
 
-
-  const handleInputChange = (playerIndex, holeIndex, value) => {
-    const newInputValues = [...inputValues];
-    newInputValues[playerIndex][holeIndex] = value;
-    setInputValues(newInputValues);
   
-    const parsedValue = parseInt(value);
-    if (!isNaN(parsedValue)) {
-      updateScore(playerIndex, holeIndex, parsedValue);
-    } else {
-      updateScore(playerIndex, holeIndex, '');
+
+  useEffect(() => {
+
+
+    const storedRounds = localStorage.getItem("rounds");
+    if (storedRounds) {
+      setRounds(JSON.parse(storedRounds));
     }
-  };
-  
+    const storedPlayerNames = localStorage.getItem("playerNames");
+    if (storedPlayerNames) {
+      setPlayerNames(JSON.parse(storedPlayerNames));
+    }
 
+    const storedPlayerHandicaps = localStorage.getItem("playerHandicaps");
+    if (storedPlayerHandicaps) {
+      setPlayerHandicaps(JSON.parse(storedPlayerHandicaps));
+    }
+
+    const storedScores = localStorage.getItem("scores");
+    if (storedScores) {
+      setScores(JSON.parse(storedScores));
+    }
+  }, []);
   const saveStateToLocalStorage = () => {
     localStorage.setItem("playerNames", JSON.stringify(playerNames));
     localStorage.setItem("playerHandicaps", JSON.stringify(playerHandicaps));
     localStorage.setItem("scores", JSON.stringify(scores));
   };
   
-  const fetchRounds = async () => {
-    try {
-      const snapshot = await db.collection("rounds").get();
-      const fetchedRounds = snapshot.docs.map((doc) => doc.data());
-      setRounds(fetchedRounds);
-    } catch (error) {
-      console.error("Error fetching rounds: ", error);
-    }
-  };
   
   
   const [buyIn, setBuyIn] = useState(10);
@@ -90,7 +79,7 @@ const GolfScorecard = ({ initialScores  }) => {
   
   
   
-
+  const [playerHandicaps, setPlayerHandicaps] = useState([]);
 
   const addPlayerWithHandicap = () => {
     const playerName = prompt("Please enter the player's name.");
@@ -184,18 +173,7 @@ const GolfScorecard = ({ initialScores  }) => {
       saveStateToLocalStorage();
     }
   };
-  const saveRound = () => {
-    const newRounds = [
-      ...rounds,
-      {
-        scores: [scores],
-        players: [...playerNames],
-        date: new Date(),
-      },
-    ];
-    setRounds(newRounds);
-    localStorage.setItem("rounds", JSON.stringify(newRounds));
-  };
+
 
   
 
@@ -206,28 +184,10 @@ const GolfScorecard = ({ initialScores  }) => {
     setPlayerNames(newPlayerNames);
   };
 
-  const [playerNames, setPlayerNames] = useState(() => {
-    const storedPlayerNames = localStorage.getItem("playerNames");
-    return storedPlayerNames ? JSON.parse(storedPlayerNames) : [];
-  });
-  
-  const [playerHandicaps, setPlayerHandicaps] = useState(() => {
-    const storedPlayerHandicaps = localStorage.getItem("playerHandicaps");
-    return storedPlayerHandicaps ? JSON.parse(storedPlayerHandicaps) : [];
-  });
-  
-  const [scores, setScores] = useState(() => {
-    const storedScores = localStorage.getItem("scores");
-    return storedScores
-      ? JSON.parse(storedScores)
-      : initialScores
-      ? initialScores.map(playerScores =>
-          playerScores.map(score => (score === "" ? "" : String(score))),
-        )
-      : Array(playerNames.length).fill(Array(holeInfo.length).fill(""));
-  });
-  
-  
+  const [playerNames, setPlayerNames] = useState([]);
+  const [scores, setScores] = useState(
+    Array(playerNames.length).fill(Array(holeInfo.length).fill(""))
+  );
 
   const editPlayer = (playerIndex) => {
     const playerName = prompt("Please enter the new player's name.", playerNames[playerIndex]);
@@ -263,56 +223,32 @@ const GolfScorecard = ({ initialScores  }) => {
   };
 
 
-  const [rounds, setRounds] = useState(() => {
-    const storedRounds = localStorage.getItem("rounds");
-    return storedRounds ? JSON.parse(storedRounds) : [];
-  });
-  
-  useEffect(() => {
-    fetchRounds();
-  }, []);
+  const [rounds, setRounds] = useState([]);
 
-  const deleteRound = async (index) => {
+  const saveRound = () => {
+    const newRounds = [
+      ...rounds,
+      {
+        scores: [...scores],
+        players: [...playerNames],
+        date: new Date(),
+      },
+    ];
+    setRounds(newRounds);
+    localStorage.setItem("rounds", JSON.stringify(newRounds));
+  };
+  
+
+
+  const deleteRound = (index) => {
     if (window.confirm("Are you sure you want to delete this round?")) {
-      const roundToDelete = rounds[index];
-      try {
-        await db.collection("rounds").doc(roundToDelete.id).delete();
-        fetchRounds();
-      } catch (error) {
-        console.error("Error removing round: ", error);
-      }
+      const newRounds = rounds.filter((_, i) => i !== index);
+      setRounds(newRounds);
+      localStorage.setItem("rounds", JSON.stringify(newRounds));
     }
   };
 
-  const addRound = async () => {
-    const newRound = {
-      score: 0,
-      date: new Date().toISOString(),
-    };
 
-    try {
-      await db.collection("rounds").add(newRound);
-      fetchRounds();
-    } catch (error) {
-      console.error("Error adding new round: ", error);
-    }
-  };
-
-  const updateRound = async (index, updatedScore) => {
-    const roundToUpdate = rounds[index];
-    try {
-      await db.collection("rounds").doc(roundToUpdate.id).update({
-        score: updatedScore,
-      });
-      fetchRounds();
-    } catch (error) {
-      console.error("Error updating round: ", error);
-    }
-  };
-
-    
-    
-  
 
   const getCellClassName = (playerIndex, holeIndex) => {
     const lowestNetScorePlayerIndex = getLowestNetScorePlayerIndex(holeIndex);
@@ -330,16 +266,10 @@ const GolfScorecard = ({ initialScores  }) => {
   
   
 
-  return (
+return (
     <div className="scorecard">
          
-      
-
-
-
-
-
-
+    
 
       <div className="header">
         <div className="cell player-name"></div>
@@ -371,11 +301,13 @@ const GolfScorecard = ({ initialScores  }) => {
 
     {scores[playerIndex].map((score, holeIndex) => (
       <div key={holeIndex} className={getCellClassName(playerIndex, holeIndex)}>
-<input
-  type="number"
-  value={inputValues[playerIndex][holeIndex]}
-  onChange={(e) => handleInputChange(playerIndex, holeIndex, e.target.value)}
-/>
+        <input
+          type="number"
+          value={score}
+          onChange={(e) =>
+            updateScore(playerIndex, holeIndex, e.target.value)
+          }
+        />
       </div>
     ))}
     <div className="cell total">
@@ -442,38 +374,30 @@ const GolfScorecard = ({ initialScores  }) => {
                 <th key={i}>Player {i + 1}</th>
               ))}
               <th></th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
             {rounds.map((round, index) => (
               <tr key={index}>
-<td>{new Date(round.date).toISOString()}</td>
+                <td>{format(round.date, 'yyyy-MM-dd')}</td>
                 {round.scores.map((score, i) => (
                   <td key={i}>{score}</td>
                 ))}
                 <td>
                   <button onClick={() => deleteRound(index)}>Delete</button>
                 </td>
-                <td>
-                  <button
-                    onClick={() =>
-                      updateRound(index, prompt('Enter the updated score:'))
-                    }
-                  >
-                    Update
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <button className="button-style" onClick={addRound}>
-          Add Round
-        </button>
       </div>
-    </div>
-  );
-};
 
-export default GolfScorecard;
+    </div>
+
+    
+
+
+  );
+}
+    
+        export default GolfScorecard;
