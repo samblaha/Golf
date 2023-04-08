@@ -31,6 +31,12 @@ const GolfScorecard = () => {
 
 
   useEffect(() => {
+
+
+    const storedRounds = localStorage.getItem("rounds");
+    if (storedRounds) {
+      setRounds(JSON.parse(storedRounds));
+    }
     const storedPlayerNames = localStorage.getItem("playerNames");
     if (storedPlayerNames) {
       setPlayerNames(JSON.parse(storedPlayerNames));
@@ -167,7 +173,18 @@ const GolfScorecard = () => {
       saveStateToLocalStorage();
     }
   };
-
+  const saveRound = () => {
+    const newRounds = [
+      ...rounds,
+      {
+        scores: [scores],
+        players: [...playerNames],
+        date: new Date(),
+      },
+    ];
+    setRounds(newRounds);
+    localStorage.setItem("rounds", JSON.stringify(newRounds));
+  };
 
   
 
@@ -219,26 +236,17 @@ const GolfScorecard = () => {
 
   const [rounds, setRounds] = useState([]);
 
-  const saveRound = () => {
-    // Add current round data to the rounds state
-    setRounds([
-      ...rounds,
-      {
-        // Add any relevant data from the scorecard that you'd like to store for each round
-        // For example: scores, players, date, etc.
-        scores: [scores],
-        players: [...playerNames],
-        date: new Date(),
-      },
-    ]);
+
+
+
+  const deleteRound = (index) => {
+    if (window.confirm("Are you sure you want to delete this round?")) {
+      const newRounds = rounds.filter((_, i) => i !== index);
+      setRounds(newRounds);
+      localStorage.setItem("rounds", JSON.stringify(newRounds));
+    }
   };
   
-
-const deleteRound = (index) => {
-  if (window.confirm("Are you sure you want to delete this round?")) {
-    setRounds(rounds.filter((_, i) => i !== index));
-  }
-};
 
   const getCellClassName = (playerIndex, holeIndex) => {
     const lowestNetScorePlayerIndex = getLowestNetScorePlayerIndex(holeIndex);
@@ -395,5 +403,7 @@ const deleteRound = (index) => {
 
   );
   
-            }
+ };
+          
+            
             export default GolfScorecard;
