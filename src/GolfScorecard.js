@@ -32,6 +32,26 @@ const holeInfo = [
 
 const GolfScorecard = () => {
 
+  const [inputValues, setInputValues] = useState(() => {
+    return scores.map(playerScores =>
+      playerScores.map(score => (score === '' ? '' : String(score))),
+    );
+  });
+  
+  const handleInputChange = (playerIndex, holeIndex, value) => {
+    const newInputValues = [...inputValues];
+    newInputValues[playerIndex][holeIndex] = value;
+    setInputValues(newInputValues);
+  
+    const parsedValue = parseInt(value);
+    if (!isNaN(parsedValue)) {
+      updateScore(playerIndex, holeIndex, parsedValue);
+    } else {
+      updateScore(playerIndex, holeIndex, '');
+    }
+  };
+  
+
   const saveStateToLocalStorage = () => {
     localStorage.setItem("playerNames", JSON.stringify(playerNames));
     localStorage.setItem("playerHandicaps", JSON.stringify(playerHandicaps));
@@ -345,13 +365,11 @@ const GolfScorecard = () => {
 
     {scores[playerIndex].map((score, holeIndex) => (
       <div key={holeIndex} className={getCellClassName(playerIndex, holeIndex)}>
-        <input
-          type="number"
-          value={score}
-          onChange={(e) =>
-            updateScore(playerIndex, holeIndex, e.target.value)
-          }
-        />
+<input
+  type="number"
+  value={inputValues[playerIndex][holeIndex]}
+  onChange={(e) => handleInputChange(playerIndex, holeIndex, e.target.value)}
+/>
       </div>
     ))}
     <div className="cell total">
