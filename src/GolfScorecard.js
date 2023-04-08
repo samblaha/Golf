@@ -30,14 +30,16 @@ const holeInfo = [
 ];
 
 
-const GolfScorecard = () => {
-
+const GolfScorecard = ({ initialScores  }) => {
   const [inputValues, setInputValues] = useState(() => {
-    return scores.map(playerScores =>
-      playerScores.map(score => (score === '' ? '' : String(score))),
-    );
+    return scores
+      ? scores.map(playerScores =>
+          playerScores.map(score => (score === '' ? '' : String(score))),
+        )
+      : [];
   });
-  
+
+
   const handleInputChange = (playerIndex, holeIndex, value) => {
     const newInputValues = [...inputValues];
     newInputValues[playerIndex][holeIndex] = value;
@@ -218,6 +220,10 @@ const GolfScorecard = () => {
     const storedScores = localStorage.getItem("scores");
     return storedScores
       ? JSON.parse(storedScores)
+      : initialScores
+      ? initialScores.map(playerScores =>
+          playerScores.map(score => (score === "" ? "" : String(score))),
+        )
       : Array(playerNames.length).fill(Array(holeInfo.length).fill(""));
   });
   
@@ -442,7 +448,7 @@ const GolfScorecard = () => {
           <tbody>
             {rounds.map((round, index) => (
               <tr key={index}>
-                <td>{new Date(round.date).toISOString().split('T')[0]}</td>
+<td>{new Date(round.date).toISOString()}</td>
                 {round.scores.map((score, i) => (
                   <td key={i}>{score}</td>
                 ))}
