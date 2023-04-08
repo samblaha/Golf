@@ -1,7 +1,7 @@
 
 import "./GolfScorecard.css";
 import { format } from 'date-fns';
-import React, { useState, useEffect } from "react";
+import React, { useState,  } from "react";
 
 
 const holeInfo = [
@@ -28,30 +28,6 @@ const holeInfo = [
 
 const GolfScorecard = () => {
 
-
-
-  useEffect(() => {
-
-
-    const storedRounds = localStorage.getItem("rounds");
-    if (storedRounds) {
-      setRounds(JSON.parse(storedRounds));
-    }
-    const storedPlayerNames = localStorage.getItem("playerNames");
-    if (storedPlayerNames) {
-      setPlayerNames(JSON.parse(storedPlayerNames));
-    }
-
-    const storedPlayerHandicaps = localStorage.getItem("playerHandicaps");
-    if (storedPlayerHandicaps) {
-      setPlayerHandicaps(JSON.parse(storedPlayerHandicaps));
-    }
-
-    const storedScores = localStorage.getItem("scores");
-    if (storedScores) {
-      setScores(JSON.parse(storedScores));
-    }
-  }, []);
   const saveStateToLocalStorage = () => {
     localStorage.setItem("playerNames", JSON.stringify(playerNames));
     localStorage.setItem("playerHandicaps", JSON.stringify(playerHandicaps));
@@ -79,7 +55,7 @@ const GolfScorecard = () => {
   
   
   
-  const [playerHandicaps, setPlayerHandicaps] = useState([]);
+
 
   const addPlayerWithHandicap = () => {
     const playerName = prompt("Please enter the player's name.");
@@ -195,10 +171,24 @@ const GolfScorecard = () => {
     setPlayerNames(newPlayerNames);
   };
 
-  const [playerNames, setPlayerNames] = useState([]);
-  const [scores, setScores] = useState(
-    Array(playerNames.length).fill(Array(holeInfo.length).fill(""))
-  );
+  const [playerNames, setPlayerNames] = useState(() => {
+    const storedPlayerNames = localStorage.getItem("playerNames");
+    return storedPlayerNames ? JSON.parse(storedPlayerNames) : [];
+  });
+  
+  const [playerHandicaps, setPlayerHandicaps] = useState(() => {
+    const storedPlayerHandicaps = localStorage.getItem("playerHandicaps");
+    return storedPlayerHandicaps ? JSON.parse(storedPlayerHandicaps) : [];
+  });
+  
+  const [scores, setScores] = useState(() => {
+    const storedScores = localStorage.getItem("scores");
+    return storedScores
+      ? JSON.parse(storedScores)
+      : Array(playerNames.length).fill(Array(holeInfo.length).fill(""));
+  });
+  
+  
 
   const editPlayer = (playerIndex) => {
     const playerName = prompt("Please enter the new player's name.", playerNames[playerIndex]);
@@ -234,7 +224,11 @@ const GolfScorecard = () => {
   };
 
 
-  const [rounds, setRounds] = useState([]);
+  const [rounds, setRounds] = useState(() => {
+    const storedRounds = localStorage.getItem("rounds");
+    return storedRounds ? JSON.parse(storedRounds) : [];
+  });
+  
 
 
 
